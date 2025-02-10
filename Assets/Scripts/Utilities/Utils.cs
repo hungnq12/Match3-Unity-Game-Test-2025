@@ -24,4 +24,22 @@ public class Utils
 
         return result;
     }
+    
+    public static NormalItem.eNormalType GetLeastAmountNormalTypeExcept(NormalItem.eNormalType[] types, Dictionary<NormalItem.eNormalType, int> typeCounts)
+    {
+        List<NormalItem.eNormalType> list = Enum.GetValues(typeof(NormalItem.eNormalType)).Cast<NormalItem.eNormalType>().Except(types).ToList();
+
+        NormalItem.eNormalType result = list[0];
+        int minCount = typeCounts[result];
+        foreach (NormalItem.eNormalType type in list)
+        {
+            if (typeCounts[type] < minCount)
+            {
+                result = type;
+                minCount = typeCounts[type];
+            }
+        }
+
+        return result;
+    }
 }

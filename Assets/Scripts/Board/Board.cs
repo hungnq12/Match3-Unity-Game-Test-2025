@@ -143,21 +143,56 @@ public class Board
 
     internal void FillGapsWithNewItems()
     {
+        NormalItem.eNormalType[] allTypes = (NormalItem.eNormalType[]) Enum.GetValues(typeof(NormalItem.eNormalType));
+        Dictionary<NormalItem.eNormalType, int> typeCounts = new Dictionary<NormalItem.eNormalType, int>();
+        foreach (NormalItem.eNormalType type in allTypes)
+        {
+            typeCounts[type] = 0;
+        }
+        for (int x = 0; x < boardSizeX; x++)
+        {
+            for (int y = 0; y < boardSizeY; y++)
+            {
+                Cell cell = m_cells[x, y];
+                if (!cell.IsEmpty && cell.Item is NormalItem existingItem)
+                {
+                    typeCounts[existingItem.ItemType]++;
+                }
+            }
+        }
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
             {
                 Cell cell = m_cells[x, y];
                 if (!cell.IsEmpty) continue;
-
+                
+                List<NormalItem.eNormalType> neighborTypes = new List<NormalItem.eNormalType>();
+                AddNeighBourType(cell.NeighbourBottom, ref neighborTypes);
+                AddNeighBourType(cell.NeighbourUp, ref neighborTypes);
+                AddNeighBourType(cell.NeighbourLeft, ref neighborTypes);
+                AddNeighBourType(cell.NeighbourRight, ref neighborTypes);
+                
                 NormalItem item = new NormalItem();
 
-                item.SetType(Utils.GetRandomNormalType());
+                item.SetType(Utils.GetLeastAmountNormalTypeExcept(neighborTypes.ToArray(), typeCounts));
                 item.SetView();
                 item.SetViewRoot(m_root);
 
                 cell.Assign(item);
                 cell.ApplyItemPosition(true);
+            }
+        }
+
+        void AddNeighBourType(Cell neighborCell, ref List<NormalItem.eNormalType> neighborTypes)
+        {
+            if (neighborCell != null)
+            {
+                NormalItem nitem = neighborCell.Item as NormalItem;
+                if (nitem != null)
+                {
+                    neighborTypes.Add(nitem.ItemType);
+                }
             }
         }
     }
