@@ -21,6 +21,12 @@ public class NormalItem : Item
     {
         ItemType = type;
     }
+    
+    public override void SetView()
+    {
+        base.SetView();
+        View.ApplySkin(ItemType);
+    }
 
     protected override string GetPrefabName()
     {

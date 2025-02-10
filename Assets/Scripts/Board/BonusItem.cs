@@ -20,6 +20,12 @@ public class BonusItem : Item
         ItemType = type;
     }
 
+    public override void SetView()
+    {
+        base.SetView();
+        View.ApplySkin(ItemType);
+    }
+
     protected override string GetPrefabName()
     {
         string prefabname = string.Empty;

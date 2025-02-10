@@ -42,16 +42,19 @@ public class Board
     private void CreateBoard()
     {
         Vector3 origin = new Vector3(-boardSizeX * 0.5f + 0.5f, -boardSizeY * 0.5f + 0.5f, 0f);
-        GameObject prefabBG = Resources.Load<GameObject>(Constants.PREFAB_CELL_BACKGROUND);
+        //GameObject prefabBG = Resources.Load<GameObject>(Constants.PREFAB_CELL_BACKGROUND);
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
             {
-                GameObject go = GameObject.Instantiate(prefabBG);
-                go.transform.position = origin + new Vector3(x, y, 0f);
-                go.transform.SetParent(m_root);
+                //GameObject go = GameObject.Instantiate(prefabBG);
+                //go.transform.position = origin + new Vector3(x, y, 0f);
+                //go.transform.SetParent(m_root);
 
-                Cell cell = go.GetComponent<Cell>();
+                //Cell cell = go.GetComponent<Cell>();
+                Cell cell = PoolManager.Instance.GetObject<Cell>();
+                cell.transform.position = origin + new Vector3(x, y, 0f);
+                cell.transform.SetParent(m_root);
                 cell.Setup(x, y);
 
                 m_cells[x, y] = cell;
@@ -178,8 +181,8 @@ public class Board
         cell2.Free();
         cell2.Assign(item);
 
-        item.View.DOMove(cell2.transform.position, 0.3f);
-        item2.View.DOMove(cell1.transform.position, 0.3f).OnComplete(() => { if (callback != null) callback(); });
+        item.View.transform.DOMove(cell2.transform.position, 0.3f);
+        item2.View.transform.DOMove(cell1.transform.position, 0.3f).OnComplete(() => { if (callback != null) callback(); });
     }
 
     public List<Cell> GetHorizontalMatches(Cell cell)
@@ -285,6 +288,7 @@ public class Board
             item.SetView();
             item.SetViewRoot(m_root);
 
+            cellToConvert.Clear();
             cellToConvert.Free();
             cellToConvert.Assign(item);
             cellToConvert.ApplyItemPosition(true);
@@ -655,7 +659,7 @@ public class Board
                 cell.Free();
 
                 holder.Assign(item);
-                item.View.DOMove(holder.transform.position, 0.3f);
+                item.View.transform.DOMove(holder.transform.position, 0.3f);
             }
         }
     }
@@ -669,7 +673,8 @@ public class Board
                 Cell cell = m_cells[x, y];
                 cell.Clear();
 
-                GameObject.Destroy(cell.gameObject);
+                //GameObject.Destroy(cell.gameObject);
+                PoolManager.Instance.ReturnObject(cell);
                 m_cells[x, y] = null;
             }
         }

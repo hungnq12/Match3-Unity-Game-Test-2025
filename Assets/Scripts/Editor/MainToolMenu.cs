@@ -30,4 +30,17 @@ public class MainToolMenu
         Selection.activeObject = asset;
     }
 
+    
+    [MenuItem(menuTitle + "!! Create Item Skin Data !!", false, 530)]
+    static void CreateItemSkinData()
+    {
+        ItemSkinSO asset = ScriptableObject.CreateInstance<ItemSkinSO>();
+
+        AssetDatabase.CreateAsset(asset, "Assets/Resources/itemSkinSO.asset");
+        AssetDatabase.SaveAssets();
+
+        EditorUtility.FocusProjectWindow();
+
+        Selection.activeObject = asset;
+    }
 }

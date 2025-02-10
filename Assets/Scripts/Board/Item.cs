@@ -9,12 +9,12 @@ public class Item
 {
     public Cell Cell { get; private set; }
 
-    public Transform View { get; private set; }
+    public ItemView View { get; private set; }
 
 
     public virtual void SetView()
     {
-        string prefabname = GetPrefabName();
+        /*string prefabname = GetPrefabName();
 
         if (!string.IsNullOrEmpty(prefabname))
         {
@@ -23,7 +23,9 @@ public class Item
             {
                 View = GameObject.Instantiate(prefab).transform;
             }
-        }
+        }*/
+        
+        View = PoolManager.Instance.GetObject<ItemView>();
     }
 
     protected virtual string GetPrefabName() { return string.Empty; }
@@ -37,14 +39,14 @@ public class Item
     {
         if (View == null) return;
 
-        View.DOMove(Cell.transform.position, 0.2f);
+        View.transform.DOMove(Cell.transform.position, 0.2f);
     }
 
     public void SetViewPosition(Vector3 pos)
     {
         if (View)
         {
-            View.position = pos;
+            View.transform.position = pos;
         }
     }
 
@@ -52,7 +54,7 @@ public class Item
     {
         if (View)
         {
-            View.SetParent(root);
+            View.transform.SetParent(root);
         }
     }
 
@@ -60,11 +62,12 @@ public class Item
     {
         if (View == null) return;
 
-        SpriteRenderer sp = View.GetComponent<SpriteRenderer>();
+        /*SpriteRenderer sp = View.GetComponent<SpriteRenderer>();
         if (sp)
         {
             sp.sortingOrder = 1;
-        }
+        }*/
+        View.SortingOrder(1);
     }
 
 
@@ -72,11 +75,12 @@ public class Item
     {
         if (View == null) return;
 
-        SpriteRenderer sp = View.GetComponent<SpriteRenderer>();
+        /*SpriteRenderer sp = View.GetComponent<SpriteRenderer>();
         if (sp)
         {
             sp.sortingOrder = 0;
-        }
+        }*/
+        View.SortingOrder(0);
 
     }
 
@@ -84,9 +88,9 @@ public class Item
     {
         if (View == null) return;
 
-        Vector3 scale = View.localScale;
-        View.localScale = Vector3.one * 0.1f;
-        View.DOScale(scale, 0.1f);
+        Vector3 scale = View.transform.localScale;
+        View.transform.localScale = Vector3.one * 0.1f;
+        View.transform.DOScale(scale, 0.1f);
     }
 
     internal virtual bool IsSameType(Item other)
@@ -98,10 +102,11 @@ public class Item
     {
         if (View)
         {
-            View.DOScale(0.1f, 0.1f).OnComplete(
+            View.transform.DOScale(0.1f, 0.1f).OnComplete(
                 () =>
                 {
-                    GameObject.Destroy(View.gameObject);
+                    //GameObject.Destroy(View.gameObject);
+                    PoolManager.Instance.ReturnObject(View);
                     View = null;
                 }
                 );
@@ -114,7 +119,7 @@ public class Item
     {
         if (View)
         {
-            View.DOPunchScale(View.localScale * 0.1f, 0.1f).SetLoops(-1);
+            View.transform.DOPunchScale(View.transform.localScale * 0.1f, 0.1f).SetLoops(-1);
         }
     }
 
@@ -122,7 +127,7 @@ public class Item
     {
         if (View)
         {
-            View.DOKill();
+            View.transform.DOKill();
         }
     }
 
@@ -132,7 +137,8 @@ public class Item
 
         if (View)
         {
-            GameObject.Destroy(View.gameObject);
+            //GameObject.Destroy(View.gameObject);
+            PoolManager.Instance.ReturnObject(View);
             View = null;
         }
     }
