@@ -49,6 +49,7 @@ public class BoardController : MonoBehaviour
     private void Fill()
     {
         m_board.Fill();
+        m_board.CacheBoard();
         FindMatchesAndCollapse();
     }
 
@@ -57,6 +58,7 @@ public class BoardController : MonoBehaviour
         switch (state)
         {
             case GameManager.eStateGame.GAME_STARTED:
+                m_gameOver = false;
                 IsBusy = false;
                 break;
             case GameManager.eStateGame.PAUSE:
@@ -302,5 +304,11 @@ public class BoardController : MonoBehaviour
         }
 
         m_potentialMatch.Clear();
+    }
+    
+    public void RestartGame()
+    {
+        m_board.Restart();
+        FindMatchesAndCollapse();
     }
 }

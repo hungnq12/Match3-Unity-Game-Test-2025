@@ -15,6 +15,7 @@ public class LevelCondition : MonoBehaviour
     public virtual void Setup(float value, Text txt)
     {
         m_txt = txt;
+        m_conditionCompleted = false;
     }
 
     public virtual void Setup(float value, Text txt, GameManager mngr)

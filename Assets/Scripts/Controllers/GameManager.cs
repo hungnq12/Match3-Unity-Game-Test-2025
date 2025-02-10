@@ -115,6 +115,14 @@ public class GameManager : MonoBehaviour
             Destroy(m_boardController.gameObject);
             m_boardController = null;
         }
+        
+        if (m_levelCondition != null)
+        {
+            m_levelCondition.ConditionCompleteEvent -= GameOver;
+
+            Destroy(m_levelCondition);
+            m_levelCondition = null;
+        }
     }
 
     private IEnumerator WaitBoardController()
@@ -127,13 +135,21 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         State = eStateGame.GAME_OVER;
+    }
+    
+    public void RestartLevel()
+    {
+        m_boardController.RestartGame();
 
-        if (m_levelCondition != null)
+        if (m_levelCondition is LevelMoves)
         {
-            m_levelCondition.ConditionCompleteEvent -= GameOver;
-
-            Destroy(m_levelCondition);
-            m_levelCondition = null;
+            m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), m_boardController);
         }
+        else if (m_levelCondition is LevelTime)
+        {
+            m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), this);
+        }
+        
+        State = eStateGame.GAME_STARTED;
     }
 }

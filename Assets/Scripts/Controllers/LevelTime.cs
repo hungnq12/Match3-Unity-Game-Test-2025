@@ -11,7 +11,7 @@ public class LevelTime : LevelCondition
 
     public override void Setup(float value, Text txt, GameManager mngr)
     {
-        base.Setup(value, txt, mngr);
+        base.Setup(value, txt);
 
         m_mngr = mngr;
 

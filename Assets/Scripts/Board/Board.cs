@@ -25,6 +25,8 @@ public class Board
 
     private int m_matchMin;
 
+    private List<NormalItem.eNormalType> cachedItemTypes;
+
     public Board(Transform transform, GameSettings gameSettings)
     {
         m_root = transform;
@@ -676,6 +678,42 @@ public class Board
                 //GameObject.Destroy(cell.gameObject);
                 PoolManager.Instance.ReturnObject(cell);
                 m_cells[x, y] = null;
+            }
+        }
+    }
+    
+    internal void CacheBoard()
+    {
+        cachedItemTypes = new List<NormalItem.eNormalType>();
+        for (int x = 0; x < boardSizeX; x++)
+        {
+            for (int y = 0; y < boardSizeY; y++)
+            {
+                NormalItem item = m_cells[x, y].Item as NormalItem;
+                cachedItemTypes.Add(item.ItemType);
+            }
+        }
+    }
+    
+    internal void Restart()
+    {
+        int index = 0;
+        for (int x = 0; x < boardSizeX; x++)
+        {
+            for (int y = 0; y < boardSizeY; y++)
+            {
+                Cell cell = m_cells[x, y];
+                cell.Clear();
+                NormalItem item = new NormalItem();
+                
+                item.SetType(cachedItemTypes[index]);
+                item.SetView();
+                item.SetViewRoot(m_root);
+
+                cell.Assign(item);
+                cell.ApplyItemPosition(false);
+
+                index++;
             }
         }
     }
